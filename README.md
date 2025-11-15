@@ -2,6 +2,13 @@
 
 A comprehensive Bug Tracker application built with the MERN (MongoDB, Express, React, Node.js) stack, featuring extensive testing and debugging capabilities.
 
+## 🚀 Live Deployment
+
+- **Frontend (Vercel):** [https://testing-and-debugging-ensuring-mern-chi.vercel.app/](https://testing-and-debugging-ensuring-mern-chi.vercel.app/)
+- **Backend API (Render):** [https://testing-and-debugging-ensuring-mern-app-7nlu.onrender.com](https://testing-and-debugging-ensuring-mern-app-7nlu.onrender.com)
+- **API Health Check:** [https://testing-and-debugging-ensuring-mern-app-7nlu.onrender.com/health](https://testing-and-debugging-ensuring-mern-app-7nlu.onrender.com/health)
+- **API Documentation:** [https://testing-and-debugging-ensuring-mern-app-7nlu.onrender.com/api/bugs](https://testing-and-debugging-ensuring-mern-app-7nlu.onrender.com/api/bugs)
+
 ## 📋 Table of Contents
 
 - [Overview](#overview)
