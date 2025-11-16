@@ -77,8 +77,10 @@ export const deleteBug = async (id) => {
   return { data: json.data || json };
 };
 
-export default {
+const apiClient = {
   get: (url, opts) => fetch(`${API_BASE_URL}${url}`, opts).then(handleResponse),
   post: (url, body, opts) => fetch(`${API_BASE_URL}${url}`, { method: 'POST', body: JSON.stringify(body), headers: { 'Content-Type': 'application/json' }, ...opts }).then(handleResponse),
 };
+
+export default apiClient;
 
