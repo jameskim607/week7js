@@ -27,6 +27,7 @@ function App() {
       const response = await getBugs();
       setBugs(response.data || []);
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.error('Error fetching bugs:', err);
       setError('Failed to load bugs. Please try again later.');
     } finally {
@@ -41,6 +42,7 @@ function App() {
       setShowForm(false);
       setError(null);
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.error('Error creating bug:', err);
       setError('Failed to create bug. Please try again.');
       throw err;
@@ -54,6 +56,7 @@ function App() {
       setEditingBug(null);
       setError(null);
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.error('Error updating bug:', err);
       setError('Failed to update bug. Please try again.');
       throw err;
@@ -66,6 +69,7 @@ function App() {
       setBugs(bugs.filter(bug => bug._id !== id));
       setError(null);
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.error('Error deleting bug:', err);
       setError('Failed to delete bug. Please try again.');
     }

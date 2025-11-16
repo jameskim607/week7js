@@ -86,6 +86,7 @@ const BugForm = ({ onSubmit, initialData, onCancel }) => {
       setErrors({});
     } catch (err) {
       // Error handling is done in parent component
+      // eslint-disable-next-line no-console
       console.error('Form submission error:', err);
     } finally {
       setIsSubmitting(false);
