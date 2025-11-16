@@ -91,7 +91,10 @@ const BugCard = ({ bug, onDelete, onStatusUpdate, onEdit }) => {
       </div>
 
       <div className="bug-footer">
-        <span className="bug-reporter">Reporter: {bug.reporter}</span>
+        <span className="bug-reporter">
+          <span className="label">Reporter:</span>
+          <span className="reporter-name"> {bug.reporter}</span>
+        </span>
         <span className="bug-date">
           {new Date(bug.createdAt).toLocaleDateString()}
         </span>

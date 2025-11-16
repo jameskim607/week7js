@@ -1,11 +1,12 @@
 // App.jsx - Main React application component
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import './App.css';
-import BugList from './components/BugList';
-import BugForm from './components/BugForm';
 import ErrorBoundary from './components/ErrorBoundary';
 import { getBugs, createBug, updateBug, deleteBug } from './services/api';
+
+const BugList = React.lazy(() => import('./components/BugList'));
+const BugForm = React.lazy(() => import('./components/BugForm'));
 
 function App() {
   const [bugs, setBugs] = useState([]);
@@ -122,22 +123,26 @@ function App() {
           </div>
 
           {showForm && (
-            <BugForm
-              onSubmit={editingBug ? (data) => handleUpdateBug(editingBug._id, data) : handleCreateBug}
-              initialData={editingBug}
-              onCancel={handleCancelEdit}
-            />
+            <Suspense fallback={<div>Loading form...</div>}>
+              <BugForm
+                onSubmit={editingBug ? (data) => handleUpdateBug(editingBug._id, data) : handleCreateBug}
+                initialData={editingBug}
+                onCancel={handleCancelEdit}
+              />
+            </Suspense>
           )}
 
           {loading ? (
             <div className="loading">Loading bugs...</div>
           ) : (
-            <BugList
-              bugs={bugs}
-              onDelete={handleDeleteBug}
-              onStatusUpdate={handleStatusUpdate}
-              onEdit={handleEditClick}
-            />
+            <Suspense fallback={<div>Loading bugs...</div>}>
+              <BugList
+                bugs={bugs}
+                onDelete={handleDeleteBug}
+                onStatusUpdate={handleStatusUpdate}
+                onEdit={handleEditClick}
+              />
+            </Suspense>
           )}
         </main>
       </div>

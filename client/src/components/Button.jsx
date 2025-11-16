@@ -12,7 +12,7 @@ const Button = ({
   className = '',
   ...props 
 }) => {
-  const buttonClasses = `btn btn-${variant} btn-${size} ${className}`.trim();
+  const buttonClasses = `btn btn-${variant} btn-${size} ${disabled ? 'btn-disabled' : ''} ${className}`.trim();
 
   return (
     <button

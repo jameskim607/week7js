@@ -1,15 +1,28 @@
 // app.js - Main Express application entry point
 
+
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
+const helmet = require('helmet');
+const Sentry = require('@sentry/node');
 require('dotenv').config();
 
 const errorHandler = require('./middleware/errorHandler');
 const bugsRoutes = require('./routes/bugs');
 
 const app = express();
+
+// Initialize Sentry when DSN is provided
+if (process.env.SENTRY_DSN) {
+  Sentry.init({
+    dsn: process.env.SENTRY_DSN,
+    environment: process.env.NODE_ENV || 'development',
+  });
+  // Request handler must be the first middleware on the app
+  app.use(Sentry.Handlers.requestHandler());
+}
 
 // CORS configuration for production deployment
 const allowedOrigins = [
@@ -47,6 +60,7 @@ const corsOptions = {
 };
 
 // Middleware
+app.use(helmet());
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -89,6 +103,12 @@ app.use((req, res, next) => {
   error.status = 404;
   next(error);
 });
+
+// If Sentry is enabled, use its error handler first so it can capture
+// the exception, then pass to our custom error handler for formatting.
+if (process.env.SENTRY_DSN) {
+  app.use(Sentry.Handlers.errorHandler());
+}
 
 // Global error handler (must be last)
 app.use(errorHandler);

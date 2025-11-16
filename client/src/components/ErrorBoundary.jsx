@@ -24,6 +24,16 @@ class ErrorBoundary extends React.Component {
 
     // You can also log the error to an error reporting service here
     // Example: logErrorToService(error, errorInfo);
+    try {
+      // Capture with Sentry if it's available in the bundle
+      // eslint-disable-next-line global-require
+      const Sentry = require('@sentry/react');
+      if (Sentry && Sentry.captureException) {
+        Sentry.captureException(error);
+      }
+    } catch (e) {
+      // Sentry not configured / available - ignore
+    }
   }
 
   handleReset = () => {

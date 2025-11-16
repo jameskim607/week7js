@@ -1,0 +1,102 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  server-tests:
+    runs-on: ubuntu-latest
+    name: Server tests
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Install server dependencies
+        working-directory: ./server
+        run: npm ci
+      - name: Run server tests
+        working-directory: ./server
+        env:
+          NODE_ENV: test
+        run: npm test --silent
+
+  server-lint:
+    runs-on: ubuntu-latest
+    name: Server linting
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Install server dependencies
+        working-directory: ./server
+        run: npm ci
+      - name: Run ESLint
+        working-directory: ./server
+        run: npm run lint --silent || true
+
+  client-ci:
+    runs-on: ubuntu-latest
+    name: Client tests and build
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Install client dependencies
+        working-directory: ./client
+        run: npm ci
+      - name: Run client tests
+        working-directory: ./client
+        env:
+          CI: true
+        run: npm test -- --watchAll=false --silent
+      - name: Run ESLint
+        working-directory: ./client
+        run: npm run lint --silent || true
+      - name: Build client
+        working-directory: ./client
+        run: npm run build --silent
+
+  deploy-backend:
+    runs-on: ubuntu-latest
+    name: Deploy backend to Render
+    needs: [ server-tests, server-lint ]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - name: Deploy to Render
+        env:
+          RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$RENDER_DEPLOY_HOOK" ]; then
+            echo "RENDER_DEPLOY_HOOK not configured. Skipping backend deployment."
+            exit 0
+          fi
+          curl -X POST $RENDER_DEPLOY_HOOK
+
+  deploy-frontend:
+    runs-on: ubuntu-latest
+    name: Deploy frontend to Vercel
+    needs: [ client-ci ]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy to Vercel
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+        run: |
+          if [ -z "$VERCEL_TOKEN" ] || [ -z "$VERCEL_PROJECT_ID" ]; then
+            echo "Vercel secrets not configured. Skipping frontend deployment."
+            exit 0
+          fi
+          npm install -g vercel
+          vercel --prod --token=$VERCEL_TOKEN --scope=$VERCEL_ORG_ID

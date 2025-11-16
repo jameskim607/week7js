@@ -11,6 +11,16 @@ const errorHandler = (err, req, res, next) => {
   // Log error for debugging
   console.error('Error:', err);
 
+  // Send to Sentry if available
+  try {
+    const Sentry = require('@sentry/node');
+    if (Sentry && Sentry.captureException) {
+      Sentry.captureException(err);
+    }
+  } catch (sentryErr) {
+    // ignore if Sentry not installed/configured
+  }
+
   // Development: Log stack trace
   if (process.env.NODE_ENV === 'development') {
     console.error('Stack:', err.stack);

@@ -22,6 +22,7 @@ A comprehensive Bug Tracker application built with the MERN (MongoDB, Express, R
 - [API Documentation](#api-documentation)
 - [Testing Strategy](#testing-strategy)
 - [Coverage](#coverage)
+- [Deployment & CI/CD](#deployment--cicd)
 
 ## 🎯 Overview
 
@@ -577,6 +578,67 @@ View detailed coverage:
 - [Node.js Debugging Guide](https://nodejs.org/en/docs/guides/debugging-getting-started/)
 - [Chrome DevTools](https://developer.chrome.com/docs/devtools/)
 - [React DevTools](https://react.dev/learn/react-developer-tools)
+
+## 🚀 Deployment & CI/CD
+
+This project includes a complete CI/CD pipeline using GitHub Actions with automated deployment to Render (backend) and Vercel (frontend).
+
+### Quick Start for Deployment
+
+1. **Configure GitHub Secrets** - See [GITHUB_SECRETS_SETUP.md](./GITHUB_SECRETS_SETUP.md)
+   - Add `RENDER_DEPLOY_HOOK` for automatic backend deployment
+   - Add `VERCEL_TOKEN`, `VERCEL_PROJECT_ID`, `VERCEL_ORG_ID` for frontend deployment
+
+2. **Deploy** - Simply push to `main` branch:
+   ```bash
+   git push origin main
+   ```
+   GitHub Actions will automatically:
+   - Run all tests and linting
+   - Build the client
+   - Deploy to Render (if tests pass)
+   - Deploy to Vercel (if tests pass)
+
+### Documentation
+
+- **[DEPLOYMENT_PROCEDURE.md](./DEPLOYMENT_PROCEDURE.md)** - Complete deployment and rollback guide
+- **[GITHUB_SECRETS_SETUP.md](./GITHUB_SECRETS_SETUP.md)** - How to configure GitHub secrets for CI/CD
+- **[STAGING_SETUP.md](./STAGING_SETUP.md)** - Set up separate staging environment
+- **[MAINTENANCE.md](./MAINTENANCE.md)** - Maintenance, monitoring, and backups
+- **[REQUIREMENTS_ANALYSIS.md](./REQUIREMENTS_ANALYSIS.md)** - Week 7 requirements breakdown
+
+### CI/CD Pipeline
+
+The workflow (`.github/workflows/ci.yml`) runs:
+1. **Server Tests** - Jest tests on backend
+2. **Server Linting** - ESLint code quality checks
+3. **Client Tests** - Jest + React Testing Library on frontend
+4. **Client Linting** - ESLint code quality checks
+5. **Client Build** - Production build verification
+6. **Deploy Backend** - Render deployment (on `main` only, if tests pass)
+7. **Deploy Frontend** - Vercel deployment (on `main` only, if tests pass)
+
+### Manual Deployment
+
+If automated deployment isn't configured:
+
+**Frontend (Vercel):**
+```bash
+npm install -g vercel
+vercel --prod
+```
+
+**Backend (Render):**
+- Use Render Dashboard → Manual Deploy
+- Or use Render Deploy Hook webhook
+
+### Monitoring
+
+- **Error Tracking:** Sentry (configure `SENTRY_DSN` and `REACT_APP_SENTRY_DSN`)
+- **Uptime Monitoring:** UptimeRobot or similar (monitor `/health` endpoint)
+- **Logs:** Check Render and Vercel dashboards
+
+
 
 ## 📝 Notes
 
